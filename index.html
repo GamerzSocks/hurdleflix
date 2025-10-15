@@ -78,6 +78,11 @@
 
     .status{margin-top:12px;font-size:13px}
 
+    .password-box{
+      margin-top:12px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);display:flex;gap:10px;align-items:center;justify-content:space-between
+    }
+    .pw{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;font-weight:700}
+
     .footer{
       margin-top:18px;border-top:1px dashed rgba(255,255,255,0.03);padding-top:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
@@ -97,7 +102,7 @@
       <div class="logo">HF</div>
       <div>
         <h1>Hurdleflix — Early Access</h1>
-        <p class="lead">Enter a gift card to download your early-access file. No accounts.</p>
+        <p class="lead">Enter a gift card to reveal an early-access password. No accounts.</p>
       </div>
     </header>
 
@@ -111,7 +116,22 @@
             <button class="btn" id="applyBtn">Redeem</button>
           </div>
           <div class="status" id="status" aria-live="polite"></div>
-          <p class="note">This demo will download a file when a correct code is entered. Edit <code>VALID_CODES</code> below to change codes and files.</p>
+          <p class="note">This demo will reveal a password when a correct code is entered. Edit <code>VALID_CODES</code> below to change mapping.</p>
+
+          <div id="pwArea" style="display:none">
+            <div class="password-box">
+              <div>
+                <div style="font-size:12px;color:var(--muted)">Your password</div>
+                <div id="pwText" class="pw" style="font-size:16px;letter-spacing:0.6px">••••••••</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button class="btn" id="copyBtn">Copy</button>
+                <button class="mutebtn" id="hideBtn">Hide</button>
+              </div>
+            </div>
+            <p class="note">Tip: you can copy the password to clipboard.</p>
+          </div>
+
         </form>
       </div>
 
@@ -128,30 +148,18 @@
 
     <div class="footer">
       <div class="early">Early Access</div>
-      <div style="color:var(--muted);font-size:13px">Made for demo &mdash; no account creation. Version 0.2</div>
+      <div style="color:var(--muted);font-size:13px">Made for demo &mdash; no account creation. Version 0.3</div>
     </div>
   </main>
 
   <script>
     // ---------- CONFIGURATION ----------
-    // Replace the keys and file contents below with your chosen codes and files.
-    // Format: 'CODE' : { filename: 'name.ext', content: 'string or base64', mime: 'text/plain' }
-    // NOTE: For binary files you can provide base64 content and adjust 'isBase64' to true.
+    // Replace these entries with the codes you want to accept and the passwords they reveal.
+    // Keys are case-insensitive codes. Value is the password string shown to the user.
 
     const VALID_CODES = {
-      // Example codes — replace these with your own. Codes are case-insensitive.
-      'GOLD-1234-A': {
-        filename: 'hurdleflix-welcome.txt',
-        content: 'Welcome to Hurdleflix early access!\n\nEnjoy this demo content.\n',
-        mime: 'text/plain',
-        isBase64: false
-      },
-      'BLUE-5678-A': {
-        filename: 'hurdleflix-trailer-url.txt',
-        content: 'Watch the exclusive trailer at:\nhttps://example.com/hurdleflix/trailer',
-        mime: 'text/plain',
-        isBase64: false
-      }
+      'GOLD-1234-A': 'hf-early-ACCESS-2025',
+      'BLUE-5678-A': 'hurdle-flix-demo'
     };
 
     // -----------------------------------
@@ -159,38 +167,28 @@
     const applyBtn = document.getElementById('applyBtn');
     const giftInput = document.getElementById('gift');
     const status = document.getElementById('status');
+    const pwArea = document.getElementById('pwArea');
+    const pwText = document.getElementById('pwText');
+    const copyBtn = document.getElementById('copyBtn');
+    const hideBtn = document.getElementById('hideBtn');
 
     function normalize(code){
       return code.trim().toUpperCase();
     }
 
-    function downloadFile(filename, data, mime, isBase64=false){
-      let blob;
-      if(isBase64){
-        // decode base64 to binary
-        const byteChars = atob(data);
-        const byteNumbers = new Array(byteChars.length);
-        for (let i = 0; i < byteChars.length; i++) {
-          byteNumbers[i] = byteChars.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        blob = new Blob([byteArray], {type: mime});
-      } else {
-        blob = new Blob([data], {type: mime});
-      }
+    function showPassword(pw){
+      pwText.textContent = pw;
+      pwArea.style.display = 'block';
+    }
 
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+    function hidePassword(){
+      pwText.textContent = '••••••••';
+      pwArea.style.display = 'none';
     }
 
     applyBtn.addEventListener('click', ()=>{
       const code = normalize(giftInput.value || '');
+      hidePassword();
       if(!code){
         status.textContent = 'Please enter a gift card code.';
         return;
@@ -201,21 +199,29 @@
         return;
       }
 
-      const data = VALID_CODES[code];
-      status.textContent = `Code accepted — preparing download: ${data.filename}`;
+      const password = VALID_CODES[code];
+      status.textContent = 'Code accepted — password revealed below.';
       applyBtn.disabled = true;
 
-      // small delay to simulate processing
       setTimeout(()=>{
-        try{
-          downloadFile(data.filename, data.content, data.mime || 'application/octet-stream', data.isBase64 || false);
-          status.innerHTML = `Downloaded <strong>${data.filename}</strong>. Enjoy early access!`;
-        } catch(e){
-          status.textContent = 'Download failed — browser may block file creation for this content type.';
-          console.error(e);
-        }
+        showPassword(password);
         applyBtn.disabled = false;
-      }, 600);
+      }, 400);
+    });
+
+    copyBtn.addEventListener('click', async ()=>{
+      const text = pwText.textContent;
+      try{
+        await navigator.clipboard.writeText(text);
+        status.textContent = 'Password copied to clipboard.';
+      } catch(e){
+        status.textContent = 'Unable to copy — select and copy manually.';
+      }
+    });
+
+    hideBtn.addEventListener('click', ()=>{
+      hidePassword();
+      status.textContent = 'Password hidden.';
     });
 
     // Accessibility: allow Enter key
