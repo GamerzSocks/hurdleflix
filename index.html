@@ -102,17 +102,17 @@
       <div class="logo">HF</div>
       <div>
         <h1>Hurdleflix — Early Access</h1>
-        <p class="lead">Enter a code to reveal an password. No sign up needed.</p>
+        <p class="lead">Enter a code to reveal a password. No sign up needed.</p>
       </div>
     </header>
 
     <section class="flex">
       <div class="card" aria-labelledby="gift-title">
-        <h2 id="gift-title" style="margin:0 0 10px 0;font-size:15px">Redeem Code (you gotta guess it, soz matt)</h2>
+        <h2 id="gift-title" style="margin:0 0 10px 0;font-size:15px">Redeem Code</h2>
         <form id="gift-form" onsubmit="return false;">
           <label for="gift">Code</label>
           <div class="row">
-            <input id="gift" name="gift" type="text" placeholder="XXXX-XXXX-XXXX" aria-label="gift card code" autocomplete="off" />
+            <input id="gift" name="gift" type="text" placeholder="Enter your code" aria-label="gift card code" autocomplete="off" />
             <button class="btn" id="applyBtn">Redeem</button>
           </div>
           <div class="status" id="status" aria-live="polite"></div>
@@ -122,7 +122,7 @@
             <div class="password-box">
               <div>
                 <div style="font-size:12px;color:var(--muted)">Your password</div>
-                <div id="pwText" class="pw" style="font-size:16px;letter-spacing:0.6px">getstuffedmatt</div>
+                <div id="pwText" class="pw" style="font-size:16px;letter-spacing:0.6px"></div>
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <button class="btn" id="copyBtn">Copy</button>
@@ -131,7 +131,6 @@
             </div>
             <p class="note">Tip: you can copy the password to clipboard.</p>
           </div>
-
         </form>
       </div>
 
@@ -153,14 +152,13 @@
 
   <script>
     // ---------- CONFIGURATION ----------
-    // Replace these entries with the codes you want to accept and the passwords they reveal.
-    // Keys are case-insensitive codes. Value is the password string shown to the user.
-
+    // Set any codes and passwords you want here.
+    // Case-sensitive matching (e.g., 'Code123' != 'code123')
     const VALID_CODES = {
       'matt-is-course-3-material': 'getstuffedmatt',
-      'luke-is-god': 'getstuffedmatt'
+      'luke-is-god': 'getstuffedmatt',
+      'anything-you-want': 'examplepassword'
     };
-
     // -----------------------------------
 
     const applyBtn = document.getElementById('applyBtn');
@@ -171,29 +169,28 @@
     const copyBtn = document.getElementById('copyBtn');
     const hideBtn = document.getElementById('hideBtn');
 
-    function normalize(code){
-      return code.trim().toUpperCase();
+    function normalize(code) {
+      return code.trim(); // no forced uppercase — case-sensitive
     }
 
-    function showPassword(pw){
+    function showPassword(pw) {
       pwText.textContent = pw;
       pwArea.style.display = 'block';
     }
 
-    function hidePassword(){
-      pwText.textContent = '••••••••';
+    function hidePassword() {
       pwArea.style.display = 'none';
     }
 
-    applyBtn.addEventListener('click', ()=>{
+    applyBtn.addEventListener('click', () => {
       const code = normalize(giftInput.value || '');
       hidePassword();
-      if(!code){
+      if (!code) {
         status.textContent = 'Please enter a gift card code.';
         return;
       }
 
-      if(!VALID_CODES.hasOwnProperty(code)){
+      if (!Object.hasOwn(VALID_CODES, code)) {
         status.textContent = 'Gift card not recognised.';
         return;
       }
@@ -202,30 +199,29 @@
       status.textContent = 'Code accepted — password revealed below.';
       applyBtn.disabled = true;
 
-      setTimeout(()=>{
+      setTimeout(() => {
         showPassword(password);
         applyBtn.disabled = false;
       }, 400);
     });
 
-    copyBtn.addEventListener('click', async ()=>{
+    copyBtn.addEventListener('click', async () => {
       const text = pwText.textContent;
-      try{
+      try {
         await navigator.clipboard.writeText(text);
         status.textContent = 'Password copied to clipboard.';
-      } catch(e){
+      } catch (e) {
         status.textContent = 'Unable to copy — select and copy manually.';
       }
     });
 
-    hideBtn.addEventListener('click', ()=>{
+    hideBtn.addEventListener('click', () => {
       hidePassword();
       status.textContent = 'Password hidden.';
     });
 
-    // Accessibility: allow Enter key
-    giftInput.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter'){
+    giftInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
         e.preventDefault();
         applyBtn.click();
       }
