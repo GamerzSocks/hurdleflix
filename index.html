@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hurdleflix — Early Access Gift Card</title>
+  <style>
+    :root{
+      --bg:#000;
+      --card:#071323;
+      --accent:#0ea5ff; /* blue */
+      --muted:#9aa8b3;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#000 0%, #020617 60%);
+      color: #e6f0ff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+    }
+
+    .container{
+      width:100%;
+      max-width:880px;
+      background:linear-gradient(180deg,var(--card), rgba(7,19,35,0.8));
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow: 0 10px 30px rgba(2,8,23,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+      border:1px solid rgba(14,165,255,0.06);
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#005fb8);
+      display:grid;place-items:center;font-weight:800;color:#00121b;
+      font-size:20px;box-shadow:0 6px 18px rgba(14,165,255,0.08);
+    }
+    h1{font-size:20px;margin:0}
+    p.lead{margin:4px 0 0 0;color:var(--muted);font-size:13px}
+
+    .flex{
+      display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;
+    }
+
+    .card{
+      background:var(--glass);
+      padding:18px;border-radius:12px;flex:1;min-width:260px;border:1px solid rgba(255,255,255,0.03);
+    }
+
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
+    input[type="text"], textarea{
+      width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
+      background:transparent;color:inherit;font-size:14px;outline:none;resize:vertical;
+    }
+    .row{display:flex;gap:12px;align-items:center}
+
+    .btn{
+      background:linear-gradient(90deg,var(--accent),#0b7adf);
+      color:#00121b;padding:10px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer;
+      box-shadow:0 8px 20px rgba(14,165,255,0.08);
+    }
+    .mutebtn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px 12px;border-radius:10px}
+
+    .note{font-size:12px;color:var(--muted);margin-top:8px}
+
+    .status{margin-top:12px;font-size:13px}
+
+    .footer{
+      margin-top:18px;border-top:1px dashed rgba(255,255,255,0.03);padding-top:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
+    }
+    .early{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(14,165,255,0.08);color:var(--accent);font-weight:600;border:1px solid rgba(14,165,255,0.06)}
+
+    .editable{min-height:64px}
+
+    @media (max-width:640px){
+      header{gap:12px}
+      .logo{width:48px;height:48px;font-size:18px}
+    }
+  </style>
+</head>
+<body>
+  <main class="container" role="main">
+    <header>
+      <div class="logo">HF</div>
+      <div>
+        <h1>Hurdleflix — Early Access</h1>
+        <p class="lead">Enter a gift card to download your early-access file. No accounts.</p>
+      </div>
+    </header>
+
+    <section class="flex">
+      <div class="card" aria-labelledby="gift-title">
+        <h2 id="gift-title" style="margin:0 0 10px 0;font-size:15px">Redeem Gift Card</h2>
+        <form id="gift-form" onsubmit="return false;">
+          <label for="gift">Gift card code</label>
+          <div class="row">
+            <input id="gift" name="gift" type="text" placeholder="XXXX-XXXX-XXXX" aria-label="gift card code" autocomplete="off" />
+            <button class="btn" id="applyBtn">Redeem</button>
+          </div>
+          <div class="status" id="status" aria-live="polite"></div>
+          <p class="note">This demo will download a file when a correct code is entered. Edit <code>VALID_CODES</code> below to change codes and files.</p>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 10px 0;font-size:15px">About Early Access</h3>
+        <p class="note">Hurdleflix is currently in early access. Content and features are limited. This page intentionally does not collect passwords or personal account info — only gift card codes can be entered here.</p>
+
+        <div style="margin-top:12px">
+          <label for="notes">Your message (editable)</label>
+          <textarea id="notes" rows="4" placeholder="Write a short message or note here...">Thanks for trying Hurdleflix — this is early access.</textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div class="early">Early Access</div>
+      <div style="color:var(--muted);font-size:13px">Made for demo &mdash; no account creation. Version 0.2</div>
+    </div>
+  </main>
+
+  <script>
+    // ---------- CONFIGURATION ----------
+    // Replace the keys and file contents below with your chosen codes and files.
+    // Format: 'CODE' : { filename: 'name.ext', content: 'string or base64', mime: 'text/plain' }
+    // NOTE: For binary files you can provide base64 content and adjust 'isBase64' to true.
+
+    const VALID_CODES = {
+      // Example codes — replace these with your own. Codes are case-insensitive.
+      'GOLD-1234-A': {
+        filename: 'hurdleflix-welcome.txt',
+        content: 'Welcome to Hurdleflix early access!\n\nEnjoy this demo content.\n',
+        mime: 'text/plain',
+        isBase64: false
+      },
+      'BLUE-5678-A': {
+        filename: 'hurdleflix-trailer-url.txt',
+        content: 'Watch the exclusive trailer at:\nhttps://example.com/hurdleflix/trailer',
+        mime: 'text/plain',
+        isBase64: false
+      }
+    };
+
+    // -----------------------------------
+
+    const applyBtn = document.getElementById('applyBtn');
+    const giftInput = document.getElementById('gift');
+    const status = document.getElementById('status');
+
+    function normalize(code){
+      return code.trim().toUpperCase();
+    }
+
+    function downloadFile(filename, data, mime, isBase64=false){
+      let blob;
+      if(isBase64){
+        // decode base64 to binary
+        const byteChars = atob(data);
+        const byteNumbers = new Array(byteChars.length);
+        for (let i = 0; i < byteChars.length; i++) {
+          byteNumbers[i] = byteChars.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        blob = new Blob([byteArray], {type: mime});
+      } else {
+        blob = new Blob([data], {type: mime});
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    applyBtn.addEventListener('click', ()=>{
+      const code = normalize(giftInput.value || '');
+      if(!code){
+        status.textContent = 'Please enter a gift card code.';
+        return;
+      }
+
+      if(!VALID_CODES.hasOwnProperty(code)){
+        status.textContent = 'Gift card not recognised.';
+        return;
+      }
+
+      const data = VALID_CODES[code];
+      status.textContent = `Code accepted — preparing download: ${data.filename}`;
+      applyBtn.disabled = true;
+
+      // small delay to simulate processing
+      setTimeout(()=>{
+        try{
+          downloadFile(data.filename, data.content, data.mime || 'application/octet-stream', data.isBase64 || false);
+          status.innerHTML = `Downloaded <strong>${data.filename}</strong>. Enjoy early access!`;
+        } catch(e){
+          status.textContent = 'Download failed — browser may block file creation for this content type.';
+          console.error(e);
+        }
+        applyBtn.disabled = false;
+      }, 600);
+    });
+
+    // Accessibility: allow Enter key
+    giftInput.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        applyBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
