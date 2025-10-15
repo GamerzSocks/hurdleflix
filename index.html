@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hurdleflix — Early Access Gift Card</title>
+  <title>Hurdleflix — Early Access</title>
   <style>
     :root{
       --bg:#000;
@@ -102,27 +102,27 @@
       <div class="logo">HF</div>
       <div>
         <h1>Hurdleflix — Early Access</h1>
-        <p class="lead">Enter a gift card to reveal an early-access password. No accounts.</p>
+        <p class="lead">Enter a code to reveal an password. No sign up needed.</p>
       </div>
     </header>
 
     <section class="flex">
       <div class="card" aria-labelledby="gift-title">
-        <h2 id="gift-title" style="margin:0 0 10px 0;font-size:15px">Redeem Gift Card</h2>
+        <h2 id="gift-title" style="margin:0 0 10px 0;font-size:15px">Redeem Code (you gotta guess it, soz matt)</h2>
         <form id="gift-form" onsubmit="return false;">
-          <label for="gift">Gift card code</label>
+          <label for="gift">Code</label>
           <div class="row">
             <input id="gift" name="gift" type="text" placeholder="XXXX-XXXX-XXXX" aria-label="gift card code" autocomplete="off" />
             <button class="btn" id="applyBtn">Redeem</button>
           </div>
           <div class="status" id="status" aria-live="polite"></div>
-          <p class="note">This demo will reveal a password when a correct code is entered. Edit <code>VALID_CODES</code> below to change mapping.</p>
+          <p class="note">This will reveal a password when a correct code is entered.</p>
 
           <div id="pwArea" style="display:none">
             <div class="password-box">
               <div>
                 <div style="font-size:12px;color:var(--muted)">Your password</div>
-                <div id="pwText" class="pw" style="font-size:16px;letter-spacing:0.6px">••••••••</div>
+                <div id="pwText" class="pw" style="font-size:16px;letter-spacing:0.6px">getstuffedmatt</div>
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <button class="btn" id="copyBtn">Copy</button>
@@ -140,15 +140,15 @@
         <p class="note">Hurdleflix is currently in early access. Content and features are limited. This page intentionally does not collect passwords or personal account info — only gift card codes can be entered here.</p>
 
         <div style="margin-top:12px">
-          <label for="notes">Your message (editable)</label>
-          <textarea id="notes" rows="4" placeholder="Write a short message or note here...">Thanks for trying Hurdleflix — this is early access.</textarea>
+          <label for="notes">Welcome! Personal tip, don't steal my batteries.</label>
+          <textarea id="notes" rows="4" placeholder="Write a short message or note here...">Thanks for trying Hurdleflix!</textarea>
         </div>
       </div>
     </section>
 
     <div class="footer">
       <div class="early">Early Access</div>
-      <div style="color:var(--muted);font-size:13px">Made for demo &mdash; no account creation. Version 0.3</div>
+      <div style="color:var(--muted);font-size:13px"> Version 0.3</div>
     </div>
   </main>
 
@@ -158,8 +158,8 @@
     // Keys are case-insensitive codes. Value is the password string shown to the user.
 
     const VALID_CODES = {
-      'GOLD-1234-A': 'hf-early-ACCESS-2025',
-      'BLUE-5678-A': 'hurdle-flix-demo'
+      'GOLD-1234-A': 'matt-is-course-3-material',
+      'BLUE-5678-A': 'luke-is-god'
     };
 
     // -----------------------------------
